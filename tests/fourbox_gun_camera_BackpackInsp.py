@@ -115,6 +115,124 @@ class BackPackChecker:
         return out, err
 
     # =========================================================
+    #ros2通信建立的echo逻辑
+    # =========================================================
+    def ros2_echo_and_pub(
+            self,
+            topic: str,
+            pub_cmd: str,
+            expected_text: str,
+            echo_timeout: int = 5
+    ) -> Tuple[bool, str]:
+        """
+        启动 ROS2 echo监听，
+        发送一次 ROS2 指令，
+        捕获 echo 输出结果。
+
+        不使用远程log文件
+        不使用PID管理
+        不主动kill echo
+        """
+
+        # =====================================================
+        # 1. 创建SSH channel，启动echo监听
+        # =====================================================
+
+        shell_cmd = (
+            "source /opt/ros/humble/setup.sh; "
+            f"timeout {echo_timeout} ros2 topic echo {topic}"
+        )
+
+        full_cmd = (
+            f"bash --login -c "
+            f"{shlex.quote(shell_cmd)}"
+        )
+
+        channel = (
+            self.conn
+            .get_transport()
+            .open_session()
+        )
+
+        channel.exec_command(full_cmd)
+
+        try:
+
+            # =====================================================
+            # 2. 等待echo建立订阅
+            # =====================================================
+
+            time.sleep(1)
+
+            # =====================================================
+            # 3. 发布ROS指令
+            # =====================================================
+
+            pub_out, pub_err = self.exec(
+                pub_cmd,
+                timeout=10
+            )
+
+            if "publishing #1" not in pub_out:
+                return False, (
+                    "ROS2指令发送失败\n"
+                    f"err:{pub_err}\n"
+                    f"out:{pub_out}"
+                )
+
+            # =====================================================
+            # 4. 读取echo输出
+            # =====================================================
+
+            echo_content = ""
+
+            start_time = time.time()
+
+            while time.time() - start_time < echo_timeout:
+
+                if channel.recv_ready():
+
+                    data = channel.recv(4096)
+
+                    echo_content += (
+                        data.decode(
+                            errors="ignore"
+                        )
+                    )
+
+                    if expected_text in echo_content:
+                        return True, (
+                            "ROS2指令发送成功\n"
+                            "echo监听成功\n"
+                            f"echo内容:\n{echo_content}"
+                        )
+
+                # echo异常退出
+                if channel.exit_status_ready():
+                    break
+
+                time.sleep(0.2)
+
+            return False, (
+                "ROS2指令发送成功，"
+                "但echo未捕获目标消息\n"
+                f"期望内容:{expected_text}\n"
+                f"echo内容:\n{echo_content}"
+            )
+
+
+        finally:
+
+            # =====================================================
+            # 5. 关闭当前channel
+            # =====================================================
+            #
+            # 不kill echo连接的 PID
+            # 不影响其他SSH会话
+            #
+            if channel:
+                channel.close()
+    # =========================================================
     # Speaker（扬声器）检查
     # =========================================================
     def check_Speaker_device(self) -> Tuple[bool, str]:
@@ -203,42 +321,56 @@ class BackPackChecker:
     # ROS2：普通灯开关
     # =========================================================
     def test_light_switch(self) -> Tuple[bool, str]:
-    #r+三引号，原始字符串+三引号‌的组合写法，不解析转义语法
+
+        topic = "/light_control"
+
         cmd = r"""
-        ros2 topic pub /light_control std_msgs/msg/String "{data: '{\"cmd\":\"set_light_switch\",\"value\":\"1\"}'}" --time 2
+        ros2 topic pub /light_control std_msgs/msg/String "{data: '{\"cmd\":\"set_light_switch\",\"value\":\"1\"}'}" --once
         """
 
-        out, err = self.exec(cmd, timeout=10)
+        ok, msg = self.ros2_echo_and_pub(
+            topic=topic,
+            pub_cmd=cmd,
+            expected_text="set_light_switch",
+            echo_timeout=5
+        )
 
-        if "publishing #2:" not in out:
+        if not ok:
             return False, (
-                f"普通灯指令发送失败\n"
-                f"err:{err}"
-                f"out:{out}"
+                f"普通灯ROS检测失败\n"
+                f"{msg}"
             )
 
-        return True, "普通灯指令发送成功，请人工确认灯光效果"
-
+        return True, (
+            "普通灯ROS指令通信正常\n"
+            "请人工确认灯光效果"
+        )
     # =========================================================
     # ROS2：红蓝灯
     # =========================================================
     def test_red_blue_light(self) -> Tuple[bool, str]:
 
+        topic = "/light_control"
+
         cmd = r"""
-        ros2 topic pub /light_control std_msgs/msg/String "{data: '{\"cmd\":\"set_light_red_blue\",\"value\":\"1\"}'}" --time 2
+        ros2 topic pub /light_control std_msgs/msg/String "{data: '{\"cmd\":\"set_light_red_blue\",\"value\":\"1\"}'}" --once
         """
 
-        out, err = self.exec(cmd, timeout=10)
+        ok, msg = self.ros2_echo_and_pub(
+            topic=topic,
+            pub_cmd=cmd,
+            expected_text="set_light_red_blue",
+            echo_timeout=5
+        )
 
-        if "publishing #2:" not in out:
+        if not ok:
             return False, (
-                f"红蓝灯指令发送失败\n"
-                f"err:{err}"
-                f"out:{out}"
+                f"红蓝灯ROS检测失败\n"
+                f"{msg}"
             )
 
         return True, (
-            "红蓝灯指令发送成功，"
+            "红蓝灯ROS指令通信正常\n"
             "亮度：20，请人工确认灯光效果"
         )
 
@@ -247,21 +379,27 @@ class BackPackChecker:
     # =========================================================
     def test_tts(self) -> Tuple[bool, str]:
 
+        topic = "/tts_play"
+
         cmd = r"""
-        ros2 topic pub /tts_play std_msgs/msg/String "{data: '{\"voice_name\":\"xiaoyan\",\"text\":\"你好\", \"play_count\": 1}'}" --once
+        ros2 topic pub /tts_play std_msgs/msg/String "{data: '{\"voice_name\":\"xiaoyan\",\"text\":\"测试\", \"play_count\": 1}'}" --once
         """
 
-        out, err = self.exec(cmd, timeout=10)
+        ok, msg = self.ros2_echo_and_pub(
+            topic=topic,
+            pub_cmd=cmd,
+            expected_text="测试",
+            echo_timeout=5
+        )
 
-        if "publishing #1:" not in out:
+        if not ok:
             return False, (
-                f"TTS指令发送失败\n"
-                f"err:{err}"
-                f"out:{out}"
+                f"TTS ROS检测失败\n"
+                f"{msg}"
             )
 
         return True, (
-            "TTS指令发送成功，"
+            "TTS ROS指令通信正常\n"
             "请人工确认是否正常播放"
         )
 
