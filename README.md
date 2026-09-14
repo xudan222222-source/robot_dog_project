@@ -360,7 +360,7 @@ python tests/fourbox_gun_camera_BackpackInsp.py
 例如：
 
 ```bash
-python frp_insp/FrpServiceMonitor01.py
+python frp_insp/FrpServiceMonitor.py
 ```
 
 具体脚本功能以对应 Python 文件中的实现为准。

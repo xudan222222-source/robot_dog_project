@@ -45,6 +45,19 @@ class DogChecker:
     # =======================
 
     #如下 full_cmd 效果，等同=>狗/背包下直接运行:source /home/unitree/unitree_ros2/setup.sh
+
+    # full_cmd = (
+    #     "bash --login -c '"
+    #     "source /opt/ros/foxy/setup.bash;"
+    #     "source ~/unitree_ros2/cyclonedds_ws/install/setup.bash;"
+    #     "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp;"
+    #     "export CYCLONEDDS_URI=\"<CycloneDDS><Domain id=\\\"0\\\"><General><Interfaces>"
+    #     "<NetworkInterface name=\\\"eth0\\\" priority=\\\"default\\\" multicast=\\\"default\\\"/>"
+    #     "</Interfaces></General></Domain></CycloneDDS>\";"
+    #     f"{cmd}"
+    #     "'"
+    # )
+
     def exec(self, cmd: str, timeout: int = 10) -> Tuple[str, str]:
         full_cmd = (
             "bash --login -c '"
@@ -56,7 +69,6 @@ class DogChecker:
         out = stdout.read().decode(errors="ignore").strip()
         err = stderr.read().decode(errors="ignore").strip()
         return out, err
-
 
 #b2的17024hy背包已不含继电器
 
