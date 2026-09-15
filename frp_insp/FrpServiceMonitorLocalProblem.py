@@ -14,7 +14,7 @@ from config import (
 )
 
 #检测间隔
-CHECK_INTERVAL = 2
+CHECK_INTERVAL = 10
 
 # ========== 工具函数 ==========
 def get_timestamp():

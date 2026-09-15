@@ -313,7 +313,7 @@ ROS2 Humble
 ### 11.1 机器狗 IMU / RTK 检查
 
 ```bash
-python tests/IMU_RTK_DogInsp.py
+python pre_testing/IMU_RTK_DogInsp.py
 ```
 
 主要检查：
@@ -336,7 +336,7 @@ python tests/IMU_RTK_DogInsp.py
 ### 11.2 背包语音 / 麦克风检查
 
 ```bash
-python tests/Speaker_Microphone_BackpackInsp_Old.py
+python pre_testing/Speaker_Microphone_BackpackInsp_Old.py
 ```
 
 用于检查背包相关语音、麦克风等设备状态。
@@ -346,7 +346,7 @@ python tests/Speaker_Microphone_BackpackInsp_Old.py
 ### 11.3 四合一 / 网枪 / 摄像头检查
 
 ```bash
-python tests/fourbox_gun_camera_BackpackInsp.py
+python pre_testing/fourbox_gun_camera_BackpackInsp.py
 ```
 
 主要用于检查相关设备的网络连通性。
