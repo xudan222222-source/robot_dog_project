@@ -302,8 +302,6 @@ class BackPackChecker:
             "摄像头",
             self.camera_ip
         )
-        print("#############################")
-        print(camera_ok)
 
         print(
             f"【摄像头】: "

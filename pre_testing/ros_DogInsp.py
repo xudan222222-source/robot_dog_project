@@ -348,7 +348,7 @@ class DogChecker:
         print(f"开始时间：{timestamp_start}")
 
         print("\n[1] SSH连接")
-        print("⏳ 正在连接机器狗...")
+        print(f"⏳ 正在连接机器狗【{DOG_FRP_PORT}】...")
 
         if not self.connect_ssh():
             print("❌ SSH连接失败，检测终止")

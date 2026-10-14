@@ -1,0 +1,12 @@
+{
+  "apis": {
+    "login": {
+      "method": "POST",
+      "path": "/auth/auth_login/issue_token"
+    },
+    "light_control": {
+      "method": "POST",
+      "path": "/api/real_time_model/lighting_control_function"
+    }
+  }
+}
