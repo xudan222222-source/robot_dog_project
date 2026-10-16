@@ -16,7 +16,7 @@ def get_authorization_token()->str:
 
     conn = http.client.HTTPSConnection(BACKEND_URL)
 
-    # con.request()要求body必须为bytes或str
+    # 将传入的对象，进行序列化，变成JSON 格式的字符串（str）
     payload = json.dumps({
         "appId": APPID,
     })
@@ -29,12 +29,12 @@ def get_authorization_token()->str:
     data = res.read()
     conn.close()  # 关闭连接
 
-    # bytes转字符串
+    # bytes转字符串,解码
     resp_text = data.decode("utf-8")
     #res是字节(对象),对象的访问用.
     status = res.status
 
-    # 新增：json字符串转字典
+    # 新增：json字符串转字典（反序列化）
     resp_json = json.loads(resp_text)
     # 提取token，这里key名字按你后端实际返回改，我这里示例是 "token"
     token = resp_json['data']['token']
