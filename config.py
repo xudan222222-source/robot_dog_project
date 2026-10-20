@@ -22,4 +22,5 @@ CAMERA_IP = os.getenv("CAMERA_IP_daHua")
 
 #接口 检测参数
 BACKEND_URL = os.getenv("BACKEND_URL")
+BACKEND_URL2 = os.getenv("BACKEND_URL2")
 APPID = os.getenv("APPID")
