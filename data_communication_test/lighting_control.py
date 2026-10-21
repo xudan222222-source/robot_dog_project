@@ -32,8 +32,8 @@ class LightingControl:
 
         payload = {
             "roboticSn": robotic_sn,
-            "lightType": "SEARCH",
-            "lightSwitch": "CLOSE"
+            "lightType": "WARN",
+            "lightSwitch": "OPEN"
         }
 
         try:
@@ -70,4 +70,4 @@ if __name__ == "__main__":
         # 1. 先创建实例
         ctrl = LightingControl()
         # 2. 调用方法，传入需要的 robotic_sn 参数
-        ctrl.lighting_control_http(robotic_sn="go2test1")
+        ctrl.lighting_control_http(robotic_sn="jknTest")

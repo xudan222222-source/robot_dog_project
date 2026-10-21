@@ -32,7 +32,7 @@ def get_authorization_token()->str:
     # 增加业务成功判断
     if status == 200 and resp_json.get("success") is True:
         token = resp_json['data']['token']
-        print(f"✅ 获取token成功: {token}")
+        print("✅ 获取token成功")
         return token
     else:
         print("❌ login鉴权失败，无法获取token")
