@@ -26,7 +26,7 @@ def get_authorization_token()->str:
     resp_text = data.decode("utf-8")
     status = res.status
     print(f"【login接口 status】{status}")
-    print(f"【login接口返回原始】{resp_text}")
+    # print(f"【login接口返回原始】{resp_text}")
 
     resp_json = json.loads(resp_text)
     # 增加业务成功判断

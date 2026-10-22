@@ -1,12 +1,34 @@
 {
-  "apis": {
-    "login": {
-      "method": "POST",
-      "path": "/auth/auth_login/issue_token"
-    },
-    "light_control": {
-      "method": "POST",
-      "path": "/api/real_time_model/lighting_control_function"
+    "apis": {
+        "login": {
+            "method": "POST",
+            "path": "/auth/auth_login/issue_token"
+        },
+        "light_control": {
+            "method": "POST",
+            "path": "/api/real_time_model/lighting_control_function",
+            "cases": [
+                {
+                    "lightType": "SEARCH",
+                    "lightSwitch": "OPEN",
+                    "expect_log_key": "\"set_light_switch\",\"value\":\"1\""
+                },
+                {
+                    "lightType": "SEARCH",
+                    "lightSwitch": "CLOSE",
+                    "expect_log_key": "\"set_light_switch\",\"value\":\"0\""
+                },
+                {
+                    "lightType": "WARN",
+                    "lightSwitch": "OPEN",
+                    "expect_log_key": "\"set_light_red_blue\",\"value\":\"1\""
+                },
+                {
+                    "lightType": "WARN",
+                    "lightSwitch": "CLOSE",
+                    "expect_log_key": "\"set_light_red_blue\",\"value\":\"0\""
+                }
+            ]
+        }
     }
-  }
 }

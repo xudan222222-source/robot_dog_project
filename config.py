@@ -5,6 +5,7 @@ load_dotenv()
 #网络、服务 检测参数
 PUBLIC_SERVER_IP = os.getenv("PUBLIC_SERVER_IP")
 
+ROBOT_SN = os.getenv("ROBOT_SN")
 DOG_USER = os.getenv("DOG_USER")
 DOG_PASSWORD = os.getenv("DOG_PASSWORD")
 DOG_ETHERNET_IP = os.getenv("DOG_ETHERNET_IP")
