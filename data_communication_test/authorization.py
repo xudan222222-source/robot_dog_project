@@ -2,7 +2,7 @@ import json
 import http.client
 from pathlib import Path
 from config import BACKEND_URL2, APPID
-from require_api_config import get_api_config
+from data_communication_test.require_api_config import get_api_config
 
 CONFIG_PATH = Path(__file__).resolve().parent / "api_config.json"
 

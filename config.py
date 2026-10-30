@@ -21,7 +21,13 @@ FOUR_IN_ONE_PORT = os.getenv("FOUR_IN_ONE_PORT")
 GUN_IP = os.getenv("GUN_IP")
 CAMERA_IP = os.getenv("CAMERA_IP_daHua")
 
-#接口 检测参数
+#接口 参数
 BACKEND_URL = os.getenv("BACKEND_URL")
 BACKEND_URL2 = os.getenv("BACKEND_URL2")
+BACKEND_DOMAIN = os.getenv("BACKEND_DOMAIN")
+#前端页面渲染
+UER_ID = os.getenv("UER_ID")
+USER_NAME = os.getenv("USER_NAME")
+UER_PASSWORD = os.getenv("UER_PASSWORD")
+#接口提取token
 APPID = os.getenv("APPID")
